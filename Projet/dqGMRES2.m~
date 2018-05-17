@@ -27,7 +27,7 @@ v = [];
 resvec = [];
 resvec = [resvec beta];
 v = [v r/beta];
-j = 0;
+j = 1;
 x = x0;
 convergence = false;
 c = zeros(m,1);
@@ -35,10 +35,8 @@ s = zeros(m,1);
 p = [];
 gamma = beta;
 gammanew = gamma;
-h = zeros(maxit+1,maxit);
 %% Iteration
-while (~convergence) && (j < maxit)
-    j = j + 1;
+while (~convergence) && (j <= maxit)
     w = (M2\(M1\A))*v(:,j);
     %% Step1 : GS
     for i = max(1,j-m+1):j
@@ -50,33 +48,28 @@ while (~convergence) && (j < maxit)
     
     %% Step 2 : facto qr
     for i = max(1,j-m):j-1
-        newhij = c(i)*h(i,j)+s(i)*h(i+1,j);
-        newhi1j = -s(i)*h(i,j)+c(i)*h(i+1,j);
-        h(i,j) = newhij;
-        h(i+1,j) = newhi1j;
+        h(i,j) = c(j)*h(i,j)+s(j)*h(i+1,j);
+        h(i+1,j) = -s(j)*h(i,j)+c(j)*h(i+1,j);
     end
-
+    
     %% Step 3 : Apply Qi to Hj
-    c(j) =  h(j,j)/sqrt( h(j,j)^2 + h(j+1,j)^2);
-    s(j) =  h(j+1,j)/sqrt( h(j,j)^2 + h(j+1,j)^2);
+    c(j) =  h(j+1,j)/sqrt( h(j,j)^2 + h(j+1,j)^2);
+    s(j) =  h(j,j)/sqrt( h(j,j)^2 + h(j+1,j)^2);
     gammanew = -s(j)*gamma;
     gamma = c(j)*gamma;
     h(j,j) = c(j)*h(j,j)+s(j)*h(j+1,j);
-    h(j+1,j) = 0;
     %% Step 4
     p(:,j) = v(:,j)/h(j,j);
     for i = max(1,j-m):j-1
         p(:,j) = p(:,j)-h(i,j)*p(:,i)/h(j,j);
     end
-    x =x+gamma*p(:,j);
+    x =x+
     
     %% Test de convergence
-    %     resvec = [resvec sqrt(j-m+1)*gammanew];
-    %relres = norm(resvec(end))/normRHS;
-    relres = norm(M2\(M1\(A*x-b)));
-    resvec = [resvec relres];
-    
+    resvec = [resvec sqrt(j-m+1)*gammanew];
+    relres = norm(resvec(end))/normRHS;
     convergence = (relres <= tol);
+    j = j +1;
     gamma = gammanew;
 end
 iter = j;
