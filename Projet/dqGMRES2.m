@@ -1,6 +1,6 @@
 function [x, flag , relres, iter, resvec] = dqGMRES1(A, b,m, tol, maxit,M1,M2, x0)
 
-%% Résolution de Ax =b par FOM ou GMRES
+%% Résolution de Ax =b par dqGMRES
 %% Paramètres
 % A : la matrice du syst`eme que l’on cherche à résoudre
 % b : le second membre de ce système
@@ -71,11 +71,8 @@ while (~convergence) && (j < maxit)
     x =x+gamma*p(:,j);
     
     %% Test de convergence
-    %     resvec = [resvec sqrt(j-m+1)*gammanew];
-    %relres = norm(resvec(end))/normRHS;
-    relres = norm(M2\(M1\(A*x-b)));
-    resvec = [resvec relres];
-    
+    resvec = [resvec abs(gammanew)];
+    relres = resvec(end)/normRHS;
     convergence = (relres <= tol);
     gamma = gammanew;
 end

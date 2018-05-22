@@ -48,8 +48,8 @@ while (~convergence) && (j <= maxit)
     
     x = x0 + v(:,1:j)*y;
     normR =  norm(C(end));
-    resvec = [resvec normR];
     relres = normR/normRHS;
+    resvec = [resvec normR];
     convergence = (relres <= tol);
     j = j +1;
 end

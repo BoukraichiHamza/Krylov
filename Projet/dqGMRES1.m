@@ -1,6 +1,6 @@
 function [x, flag , relres, iter, resvec] = dqGMRES1(A, b,m, tol, maxit,M1,M2, x0)
 
-%% Résolution de Ax =b par FOM ou GMRES
+%% Résolution de Ax =b  dqGMRES incomplet
 %% Paramètres
 % A : la matrice du syst`eme que l’on cherche à résoudre
 % b : le second membre de ce système
